@@ -19,6 +19,9 @@ DEVICE_PATH := device/samsung/a7lte
 # Inherit from samsung msm8939-common
 include device/samsung/msm8939-common/BoardConfigCommon.mk
 
+# Bluetooth
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
+
 # Kernel
 TARGET_KERNEL_CONFIG := cyanogen_a7lte_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
