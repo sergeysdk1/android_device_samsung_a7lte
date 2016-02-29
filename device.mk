@@ -41,6 +41,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/acdb/Headset_cal.acdb:system/etc/Headset_cal.acdb \
     $(LOCAL_PATH)/audio/acdb/Speaker_cal.acdb:system/etc/Speaker_cal.acdb \
     $(LOCAL_PATH)/audio/Tfa9895.cnt:system/etc/Tfa9895.cnt
+    
+# Audio configuration
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/audio/mixer_paths.xml:system/etc/mixer_paths.xml
 
 # Inherit from msm8939-common
 $(call inherit-product, device/samsung/msm8939-common/msm8939.mk)
