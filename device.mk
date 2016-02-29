@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+LOCAL_PATH := device/samsung/a7lte
+
 # Proprietary files
 $(call inherit-product, vendor/samsung/a7lte/a7lte-vendor.mk)
 
@@ -24,6 +26,10 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 # Boot animation
 TARGET_SCREEN_HEIGHT := 1920
 TARGET_SCREEN_WIDTH := 1080
+
+# TWRP
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
 
 # Inherit from msm8939-common
 $(call inherit-product, device/samsung/msm8939-common/msm8939.mk)
