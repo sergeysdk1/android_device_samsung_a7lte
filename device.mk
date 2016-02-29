@@ -16,6 +16,9 @@
 
 LOCAL_PATH := device/samsung/a7lte
 
+# Overlay
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
+
 # Proprietary files
 $(call inherit-product, vendor/samsung/a7lte/a7lte-vendor.mk)
 
