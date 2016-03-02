@@ -34,6 +34,10 @@ TARGET_SCREEN_WIDTH := 1080
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
 
+# Permissions
+PRODUCT_COPY_FILES += \
+    external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:system/etc/permissions/com.dsi.ant.antradio_library.xml
+
 # Audio Caliberations
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/acdb/Bluetooth_cal.acdb:system/etc/Bluetooth_cal.acdb \
@@ -62,6 +66,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/wifi/WCNSS_qcom_wlan_nv.bin:system/etc/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin
 
+# ANT+
+PRODUCT_PACKAGES += \
+   AntHalService \
+   com.dsi.ant.antradio_library \
+   libantradio
+    
 # Display
 $(call inherit-product, frameworks/native/build/phone-xxhdpi-2048-dalvik-heap.mk)
 $(call inherit-product, frameworks/native/build/phone-xxhdpi-2048-hwui-memory.mk)

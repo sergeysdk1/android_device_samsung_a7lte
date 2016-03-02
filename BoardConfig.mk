@@ -64,5 +64,8 @@ TW_INCLUDE_CRYPTO := true
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun%d/file
 COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
 
+# ANT+
+BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
+
 # inherit from the proprietary version
 -include vendor/samsung/a7lte/BoardConfigVendor.mk
