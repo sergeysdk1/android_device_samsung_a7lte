@@ -23,7 +23,7 @@ include device/samsung/msm8939-common/BoardConfigCommon.mk
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
 
 # Kernel
-TARGET_KERNEL_CONFIG := cyanogen_a7lte_defconfig
+TARGET_KERNEL_CONFIG := cyanogenmod_a7lte_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/a7lte
 
