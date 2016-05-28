@@ -1,0 +1,32 @@
+From 19407901622ec75e798515bd29f325975c0ba94a Mon Sep 17 00:00:00 2001
+From: Davis Malnieks <malnieks.davis@gmail.com>
+Date: Fri, 6 Nov 2015 14:50:01 -0500
+Subject: [PATCH 2/2] set 'realcall' param for samsung prebuilt audio blobs
+
+Change-Id: Ifd38c70c25acaa3e251b4f60f464cab34a823de0
+---
+ src/com/android/server/telecom/CallAudioManager.java | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/com/android/server/telecom/CallAudioManager.java b/src/com/android/server/telecom/CallAudioManager.java
+index ae0da96..b76d115 100644
+--- a/src/com/android/server/telecom/CallAudioManager.java
++++ b/src/com/android/server/telecom/CallAudioManager.java
+@@ -138,6 +138,14 @@ final class CallAudioManager extends CallsManagerListenerBase
+                     Log.v(this, "Request to change audio mode from %s to %s", modeToString(oldMode),
+                             modeToString(newMode));
+ 
++                    if(newMode == 0) {
++                        mAudioManager.setParameters("TFA_SETVOLUME=0");
++                        mAudioManager.setParameters("realcall=off");
++                    } else if(newMode == AudioManager.MODE_IN_COMMUNICATION || newMode == AudioManager.MODE_RINGTONE
++                                || newMode == AudioManager.MODE_IN_CALL) {
++                        mAudioManager.setParameters("realcall=on");
++                    }
++
+                     if (oldMode != newMode) {
+                         if (oldMode == AudioManager.MODE_IN_CALL &&
+                                 newMode == AudioManager.MODE_RINGTONE) {
+-- 
+2.1.4
+
