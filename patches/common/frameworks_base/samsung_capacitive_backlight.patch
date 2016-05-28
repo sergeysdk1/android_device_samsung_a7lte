@@ -15,19 +15,19 @@ Signed-off-by: Jackeagle <jackeagle102@gmail.com>
  1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/services/core/java/com/android/server/power/PowerManagerService.java b/services/core/java/com/android/server/power/PowerManagerService.java
-index 1fd1fbd..e6a80cd 100644
+index dc0d097..bed78d3 100644
 --- a/services/core/java/com/android/server/power/PowerManagerService.java
 +++ b/services/core/java/com/android/server/power/PowerManagerService.java
-@@ -172,7 +172,7 @@ public final class PowerManagerService extends SystemService
+@@ -156,7 +156,7 @@ public final class PowerManagerService extends SystemService
+     // Power features defined in hardware/libhardware/include/hardware/power.h.
+     private static final int POWER_FEATURE_DOUBLE_TAP_TO_WAKE = 1;
+ 
+-    private static final int DEFAULT_BUTTON_ON_DURATION = 5 * 1000;
++    private static final int DEFAULT_BUTTON_ON_DURATION = 2 * 1000;
+ 
      // Default setting for double tap to wake.
      private static final int DEFAULT_DOUBLE_TAP_TO_WAKE = 0;
- 
--    private static final int BUTTON_ON_DURATION = 5 * 1000;
-+    private static final int BUTTON_ON_DURATION = 2 * 1000;
- 
-     private static final float PROXIMITY_NEAR_THRESHOLD = 5.0f;
- 
-@@ -244,6 +244,7 @@ public final class PowerManagerService extends SystemService
+@@ -223,6 +223,7 @@ public final class PowerManagerService extends SystemService
      // Timestamp of the last call to user activity.
      private long mLastUserActivityTime;
      private long mLastUserActivityTimeNoChangeLights;
@@ -35,7 +35,7 @@ index 1fd1fbd..e6a80cd 100644
  
      // Timestamp of last interactive power hint.
      private long mLastInteractivePowerHintTime;
-@@ -1183,6 +1184,11 @@ public final class PowerManagerService extends SystemService
+@@ -1085,6 +1086,11 @@ public final class PowerManagerService extends SystemService
                      return true;
                  }
              } else {
@@ -47,15 +47,15 @@ index 1fd1fbd..e6a80cd 100644
                  if (eventTime > mLastUserActivityTime) {
                      mLastUserActivityTime = eventTime;
                      mDirty |= DIRTY_USER_ACTIVITY;
-@@ -1716,7 +1722,7 @@ public final class PowerManagerService extends SystemService
-                             mKeyboardLight.setBrightness(mKeyboardVisible ?
-                                     keyboardBrightness : 0);
+@@ -1584,7 +1590,7 @@ public final class PowerManagerService extends SystemService
+                             }
+ 
                              if (mButtonTimeout != 0
 -                                    && now > mLastUserActivityTime + mButtonTimeout) {
 +                                    && now > mLastButtonActivityTime + mButtonTimeout) {
                                  mButtonsLight.setBrightness(0);
                              } else {
-                                 if (!mProximityPositive) {
+                                 mButtonsLight.setBrightness(buttonBrightness);
 -- 
-2.5.0
+2.1.4
 
