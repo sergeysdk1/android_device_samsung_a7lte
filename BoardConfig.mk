@@ -68,5 +68,9 @@ COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
 
+# Camera
+TARGET_PROVIDES_CAMERA_HAL := true
+USE_DEVICE_SPECIFIC_CAMERA := true
+
 # inherit from the proprietary version
 -include vendor/samsung/a7lte/BoardConfigVendor.mk
