@@ -110,6 +110,8 @@ static bool needYUV420preview(android::CameraParameters &params) {
 #define KEY_VIDEO_HFR_VALUES "video-hfr-values"
 
 const static char * iso_values[] = {"auto,ISO_HJR,ISO100,ISO200,ISO400,ISO800,ISO1600,auto"};
+const char KEY_SUPPORTED_ISO_MODES[] = "iso-values";
+const char KEY_ISO_MODE[] = "iso";
 
 static char *camera_fixup_getparams(int id, const char *settings)
 {
@@ -120,6 +122,9 @@ static char *camera_fixup_getparams(int id, const char *settings)
     ALOGV("%s: original parameters:", __FUNCTION__);
     params.dump();
 #endif
+
+    // ISO modes
+    params.set(KEY_SUPPORTED_ISO_MODES, iso_values[id]);
 
     // fix params here
     params.set(android::CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP, "0.5");
@@ -161,6 +166,21 @@ static char *camera_fixup_setparams(struct camera_device *device, const char *se
     ALOGV("%s: original parameters:", __FUNCTION__);
     params.dump();
 #endif
+
+    const char* isoMode = params.get(KEY_ISO_MODE);
+    if(isoMode) {
+        if(strcmp(isoMode, "ISO100") == 0)
+            params.set(KEY_ISO_MODE, 100);
+        else if(strcmp(isoMode, "ISO200") == 0)
+            params.set(KEY_ISO_MODE, 200);
+        else if(strcmp(isoMode, "ISO400") == 0)
+            params.set(KEY_ISO_MODE, 400);
+        else if(strcmp(isoMode, "ISO800") == 0)
+            params.set(KEY_ISO_MODE, 800);
+        else if(strcmp(isoMode, "ISO1600") == 0)
+            params.set(KEY_ISO_MODE, 1600);
+    }
+
 
     const char *recordingHint = params.get(android::CameraParameters::KEY_RECORDING_HINT);
     bool isVideo = recordingHint && !strcmp(recordingHint, "true");
