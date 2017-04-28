@@ -1,0 +1,174 @@
+From ebde30d335d498fa3e4d602fead8d17e137fe27e Mon Sep 17 00:00:00 2001
+From: sergeysdk1 <sdk@fromru.com>
+Date: Fri, 28 Apr 2017 09:17:19 +0300
+Subject: [PATCH] Fix FMRadio Use one audio device Disable recording
+
+Change-Id: I8c492fea08e7f51a62b3a625d12b2c220572292b
+---
+ fmapp2/src/com/caf/fmradio/FMRadio.java        | 19 +++++++++-
+ fmapp2/src/com/caf/fmradio/FMRadioService.java | 52 +++++++++++++++++++++++++-
+ 2 files changed, 68 insertions(+), 3 deletions(-)
+
+diff --git a/fmapp2/src/com/caf/fmradio/FMRadio.java b/fmapp2/src/com/caf/fmradio/FMRadio.java
+index 94a7526..a0e8f82 100644
+--- a/fmapp2/src/com/caf/fmradio/FMRadio.java
++++ b/fmapp2/src/com/caf/fmradio/FMRadio.java
+@@ -105,7 +105,7 @@ public class FMRadio extends Activity
+ {
+    public static final String LOGTAG = "FMRadio";
+ 
+-   public static final boolean RECORDING_ENABLE = true;
++   public static final boolean RECORDING_ENABLE = false;
+    MediaRecorder mRecorder = null;
+ 
+    /* menu Identifiers */
+@@ -2670,6 +2670,23 @@ public class FMRadio extends Activity
+       }//handleMessage
+    };
+ 
++   @Override
++   public boolean onKeyDown(int keyCode, KeyEvent event) {
++    AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
++       switch (keyCode) {
++       case KeyEvent.KEYCODE_VOLUME_UP:
++           audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
++                AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
++           return true;
++       case KeyEvent.KEYCODE_VOLUME_DOWN:
++           audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
++                AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
++           return true;
++       default:
++           return super.onKeyDown(keyCode, event);
++       }
++   }
++
+    private void resetFMStationInfoUI() {
+       mTunedStation.setFrequency(FmSharedPreferences.getTunedFrequency());
+       mTunedStation.setName("");
+diff --git a/fmapp2/src/com/caf/fmradio/FMRadioService.java b/fmapp2/src/com/caf/fmradio/FMRadioService.java
+index 887c228..408f7a0 100644
+--- a/fmapp2/src/com/caf/fmradio/FMRadioService.java
++++ b/fmapp2/src/com/caf/fmradio/FMRadioService.java
+@@ -1076,6 +1076,24 @@ public class FMRadioService extends Service
+                mSpeakerPhoneOn = true;
+        }
+ 
++       if (mSpeakerPhoneOn) {
++               if (mA2dpConnected) {
++                       mAudioManager.setMode(AudioManager.MODE_IN_CALL);
++                       mAudioManager.setSpeakerphoneOn(true);
++                       mAudioManager.setParameters("fm_mode=on");
++                       mAudioManager.setParameters("fm_radio_volume=on");
++                       mAudioManager.setParameters("FMRadioVol=0.0");
++               }
++       } else {
++               mAudioManager.setMode(AudioManager.MODE_IN_CALL);
++               mAudioManager.setSpeakerphoneOn(false);
++               mAudioManager.setParameters("fm_mode=on");
++               mAudioManager.setParameters("fm_radio_volume=on");
++               mAudioManager.setParameters("fm_mute=0");
++               mAudioManager.setParameters("fm_radio_mute=0");
++               mAudioManager.setParameters("FMRadioVol=0.0");
++       }
++
+        mPlaybackInProgress = true;
+        configureAudioDataPath(true);
+        try {
+@@ -1090,6 +1108,8 @@ public class FMRadioService extends Service
+        Log.d(LOGTAG, "In stopFM");
+        configureAudioDataPath(false);
+        mPlaybackInProgress = false;
++       mAudioManager.setParameters("fm_radio_mute=1");
++       mAudioManager.setParameters("fm_mode=off");
+        try {
+            if ((mServiceInUse) && (mCallbacks != null))
+                mCallbacks.onFmAudioPathStopped();
+@@ -1539,6 +1559,9 @@ public class FMRadioService extends Service
+       public void run() {
+          Log.v(LOGTAG, "Disabling Speaker");
+          AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_NONE);
++         mAudioManager.setSpeakerphoneOn(false);
++         mAudioManager.setParameters("fm_mode=on");
++         mAudioManager.setParameters("fm_radio_volume=on");
+       }
+    };
+ 
+@@ -2196,6 +2219,22 @@ public class FMRadioService extends Service
+       return(bStatus);
+    }
+ 
++   private void resetAudioRoute() {
++       if (isSpeakerEnabled() == true) {
++           if (mA2dpConnected == true) {
++               Log.d(LOGTAG, "A2DP connected, de-select BT");
++               AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_NO_BT_A2DP);
++           } else {
++               Log.d(LOGTAG, "A2DP is not connected, force none");
++               AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_NONE);
++               mAudioManager.setMode(AudioManager.MODE_IN_CALL);
++               mAudioManager.setSpeakerphoneOn(false);
++               mAudioManager.setParameters("fm_mode=on");
++               mAudioManager.setParameters("fm_radio_volume=on");
++           }
++       }
++   }
++
+   /*
+    * Turn OFF FM Operations: This disables all the current FM operations             .
+    */
+@@ -2220,8 +2259,8 @@ public class FMRadioService extends Service
+          Log.d(LOGTAG, "audioManager.setFmRadioOn false done \n" );
+       }
+       // reset FM audio settings
+-      if (isSpeakerEnabled() == true)
+-          enableSpeaker(false);
++      resetAudioRoute();
++
+       if (isMuted() == true)
+           unMute();
+ 
+@@ -2257,6 +2296,9 @@ public class FMRadioService extends Service
+       if ( mSpeakerPhoneOn) {
+           mSpeakerPhoneOn = false;
+           AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_NONE);
++          mAudioManager.setSpeakerphoneOn(false);
++          mAudioManager.setParameters("fm_mode=on");
++          mAudioManager.setParameters("fm_radio_volume=on");
+       }
+    }
+ 
+@@ -2376,10 +2418,14 @@ public class FMRadioService extends Service
+             } else {
+                 Log.d(LOGTAG, "A2DP is not connected, force none");
+                 AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_NONE);
++                mAudioManager.setSpeakerphoneOn(false);
++                mAudioManager.setParameters("FMRadioVol=0.0");
+             }
+        } else if (speakerOn == true) {
+            Log.d(LOGTAG, "enabling speaker");
+            AudioSystem.setForceUse(AudioSystem.FOR_MEDIA, AudioSystem.FORCE_SPEAKER);
++           mAudioManager.setSpeakerphoneOn(true);
++           mAudioManager.setParameters("FMRadioVol=0.0");
+        }
+ 
+        Log.d(LOGTAG, "speakerOn completed:" + speakerOn);
+@@ -2480,6 +2526,7 @@ public class FMRadioService extends Service
+       {
+          mMuted = true;
+          audioManager.setParameters("fm_mute=1");
++         audioManager.setParameters("fm_radio_mute=1");
+          if (mAudioTrack != null)
+              mAudioTrack.setVolume(0.0f);
+       }
+@@ -2502,6 +2549,7 @@ public class FMRadioService extends Service
+       {
+          mMuted = false;
+          audioManager.setParameters("fm_mute=0");
++         audioManager.setParameters("fm_radio_mute=0");
+          if (mAudioTrack != null)
+              mAudioTrack.setVolume(1.0f);
+          if (mResumeAfterCall)
+-- 
+2.7.4
+
