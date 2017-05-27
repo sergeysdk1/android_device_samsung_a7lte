@@ -26,7 +26,11 @@ $(call inherit-product, vendor/cm/config/nfc_enhanced.mk)
 
 # Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a7lte
-PRODUCT_NAME := cm_a7lte
+PRODUCT_NAME := lineage_a7lte
 PRODUCT_BRAND := samsung
 PRODUCT_MODEL := SM-A700FD
 PRODUCT_MANUFACTURER := samsung
+
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    BUILD_FINGERPRINT="samsung/a7ltexx/a7lte:6.0.1/MMB29M/A700FDXXS1CPK1:user/release-keys" \
+    PRIVATE_BUILD_DESC="a7ltexx-user 6.0.1 MMB29M A700FDXXS1CPK1 release-keys "
