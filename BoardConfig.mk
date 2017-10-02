@@ -23,9 +23,12 @@ include device/samsung/msm8939-common/BoardConfigCommon.mk
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
 
 # Kernel
-TARGET_KERNEL_CONFIG := cyanogenmod_a7lte_defconfig
+TARGET_KERNEL_VARIANT_CONFIG := a7lte_defconfig
+TARGET_KERNEL_CONFIG := msm8916_sec_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
-TARGET_KERNEL_SOURCE := kernel/samsung/a7lte
+TARGET_KERNEL_SELINUX_LOG_CONFIG := selinux_log_defconfig
+TARGET_KERNEL_SOURCE := kernel/samsung/msm8916
+KERNEL_TOOLCHAIN_PREFIX := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-
 
 # Partition Info
 BOARD_BOOTIMAGE_PARTITION_SIZE := 13631488
