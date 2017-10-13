@@ -1,24 +1,31 @@
-From 1fb2a4fdce820bde72925b13cfdd848ef517e761 Mon Sep 17 00:00:00 2001
+From e3e8347aaf830744cd019ef01ef9a38f93849d1b Mon Sep 17 00:00:00 2001
 From: sergeysdk1 <sdk@fromru.com>
 Date: Sat, 27 May 2017 23:50:34 +0300
 Subject: [PATCH] sepolicy fixes for samsung blobs
 
 Change-Id: Iba525eace5d2696c593d768674cf4da05221a673
 ---
- domain.te | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ domain.te | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/domain.te b/domain.te
-index cc76ee7..6df1c41 100644
+index cc76ee7..c1c9dd2 100644
 --- a/domain.te
 +++ b/domain.te
-@@ -278,7 +278,7 @@ neverallow { domain -kernel -init -recovery -vold -uncrypt } block_device:blk_fi
+@@ -272,13 +272,13 @@ neverallow domain init:binder *;
+ 
+ # Don't allow raw read/write/open access to block_device
+ # Rather force a relabel to a more specific type
+-neverallow { domain -kernel -init -recovery -vold -uncrypt } block_device:blk_file { open read write };
++neverallow { domain -kernel -init -recovery -vold -uncrypt -fsck } block_device:blk_file { open read write };
+ 
+ # Don't allow raw read/write/open access to generic devices.
  # Rather force a relabel to a more specific type.
  # init is exempt from this as there are character devices that only it uses.
  # ueventd is exempt from this, as it is managing these devices.
 -neverallow { domain -init -ueventd } device:chr_file { open read write };
 +neverallow { domain -init -ueventd -nfc -mediaserver } device:chr_file { open read write };
-
+ 
  # Limit what domains can mount filesystems or change their mount flags.
  # sdcard_type / vfat is exempt as a larger set of domains need
 @@ -297,6 +297,7 @@ neverallow {
@@ -30,14 +37,14 @@ index cc76ee7..6df1c41 100644
  neverallow {
      domain
 @@ -345,7 +346,7 @@ neverallow domain default_android_service:service_manager add;
-
+ 
  # Require that domains explicitly label unknown properties, and do not allow
  # anyone but init to modify unknown properties.
 -neverallow { domain -init } default_prop:property_service set;
 +neverallow { domain -init -mediaserver -rild } default_prop:property_service set;
-
+ 
  neverallow { domain -init -recovery -system_server } frp_block_device:blk_file rw_file_perms;
-
---
+ 
+-- 
 2.7.4
 
