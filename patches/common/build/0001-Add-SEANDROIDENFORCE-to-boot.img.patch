@@ -1,0 +1,72 @@
+From 7494a29f705ac0ef79d5cc12ab5836621954c0aa Mon Sep 17 00:00:00 2001
+From: sergeysdk1 <sdk@fromru.com>
+Date: Thu, 12 Oct 2017 08:52:42 +0300
+Subject: [PATCH] Add SEANDROIDENFORCE to boot.img
+
+Change-Id: Ifa625307375b34d8154d68f2bf01df800db0c3e3
+---
+ core/Makefile | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/core/Makefile b/core/Makefile
+index 5ea1b2a..07b0a8d 100644
+--- a/core/Makefile
++++ b/core/Makefile
+@@ -548,6 +548,8 @@ else ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_BOOT_SIGNER)) #
+ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOT_SIGNER) $(BOOTIMAGE_EXTRA_DEPS)
+ 	$(call pretty,"Target boot image: $@")
+ 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
++	@echo -e ${CL_CYN}"Making image SEAndroid Enforcing..."${CL_RST}
++	$(hide) echo -n "SEANDROIDENFORCE" >> $@
+ 	$(BOOT_SIGNER) /boot $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).pk8 $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).x509.pem $@
+ 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+ 	@echo -e ${CL_CYN}"Made boot image: $@"${CL_RST}
+@@ -556,6 +558,8 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOT_S
+ bootimage-nodeps: $(MKBOOTIMG) $(BOOT_SIGNER)
+ 	@echo "make $@: ignoring dependencies"
+ 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
++	@echo -e ${CL_CYN}"Making image SEAndroid Enforcing..."${CL_RST}
++	$(hide) echo -n "SEANDROIDENFORCE" >> $@
+ 	$(BOOT_SIGNER) /boot $(INSTALLED_BOOTIMAGE_TARGET) $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).pk8 $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).x509.pem $(INSTALLED_BOOTIMAGE_TARGET)
+ 	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+ 	@echo -e ${CL_INS}"Made boot image: $@"${CL_RST}
+@@ -567,6 +571,8 @@ else ifndef BOARD_CUSTOM_BOOTIMG_MK
+ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(VBOOT_SIGNER) $(BOOTIMAGE_EXTRA_DEPS)
+ 	$(call pretty,"Target boot image: $@")
+ 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@.unsigned
++	@echo -e ${CL_CYN}"Making image SEAndroid Enforcing..."${CL_RST}
++	$(hide) echo -n "SEANDROIDENFORCE" >> $@
+ 	$(VBOOT_SIGNER) $(FUTILITY) $@.unsigned $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $@.keyblock $@
+ 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+ 
+@@ -574,6 +580,8 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(VBOOT_
+ bootimage-nodeps: $(MKBOOTIMG) $(VBOOT_SIGNER)
+ 	@echo "make $@: ignoring dependencies"
+ 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET).unsigned
++	@echo -e ${CL_CYN}"Making image SEAndroid Enforcing..."${CL_RST}
++	$(hide) echo -n "SEANDROIDENFORCE" >> $@
+ 	$(VBOOT_SIGNER) $(FUTILITY) $(INSTALLED_BOOTIMAGE_TARGET).unsigned $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $(INSTALLED_BOOTIMAGE_TARGET).keyblock $(INSTALLED_BOOTIMAGE_TARGET)
+ 	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+ 
+@@ -582,6 +590,8 @@ bootimage-nodeps: $(MKBOOTIMG) $(VBOOT_SIGNER)
+ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIMAGE_EXTRA_DEPS)
+ 	$(call pretty,"Target boot image: $@")
+ 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
++	@echo -e ${CL_CYN}"Making image SEAndroid Enforcing..."${CL_RST}
++	$(hide) echo -n "SEANDROIDENFORCE" >> $@
+ 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+ 	@echo -e ${CL_CYN}"Made boot image: $@"${CL_RST}
+ 
+@@ -589,6 +599,9 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIM
+ bootimage-nodeps: $(MKBOOTIMG)
+ 	@echo "make $@: ignoring dependencies"
+ 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
++	@echo -e ${CL_INS}"Made boot image: $@"${CL_RST}
++	@echo -e ${CL_CYN}"Making image SEAndroid Enforcing..."${CL_RST}
++	$(hide) echo -n "SEANDROIDENFORCE" >> $@
+ 	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+ 	@echo -e ${CL_INS}"Made boot image: $@"${CL_RST}
+ 
+-- 
+2.7.4
+
