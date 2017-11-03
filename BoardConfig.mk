@@ -24,10 +24,10 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
 
 # Kernel
 TARGET_KERNEL_VARIANT_CONFIG := a7lte_defconfig
-TARGET_KERNEL_CONFIG := msm8916_sec_defconfig
+TARGET_KERNEL_CONFIG := a7lte_defconfig
 TARGET_KERNEL_SELINUX_CONFIG := selinux_defconfig
 TARGET_KERNEL_SELINUX_LOG_CONFIG := selinux_log_defconfig
-TARGET_KERNEL_SOURCE := kernel/samsung/msm8916
+TARGET_KERNEL_SOURCE := kernel/samsung/a7lte
 KERNEL_TOOLCHAIN_PREFIX := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-
 
 # Partition Info
@@ -73,6 +73,9 @@ BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
 # Camera
 TARGET_PROVIDES_CAMERA_HAL := true
 USE_DEVICE_SPECIFIC_CAMERA := true
+
+# Init
+TARGET_LIBINIT_MSM8939_DEFINES_FILE := $(DEVICE_PATH)/init/init_a7lte.cpp
 
 # inherit from the proprietary version
 -include vendor/samsung/a7lte/BoardConfigVendor.mk
